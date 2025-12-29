@@ -35,7 +35,7 @@ public:
     QStackedWidget *stackedWidget;
     QWidget *loginPage;
     QFrame *loeinFrame;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QGridLayout *gridLayout;
     QLabel *label_2;
@@ -45,7 +45,7 @@ public:
     QSpacerItem *verticalSpacer;
     QPushButton *loginButton;
     QWidget *chatPage;
-    QWidget *widget1;
+    QWidget *layoutWidget1;
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
     QTextEdit *roomTexitEdit;
@@ -120,30 +120,30 @@ public:
 ""));
         loeinFrame->setFrameShape(QFrame::Shape::StyledPanel);
         loeinFrame->setFrameShadow(QFrame::Shadow::Raised);
-        widget = new QWidget(loeinFrame);
-        widget->setObjectName("widget");
-        widget->setGeometry(QRect(70, 30, 261, 131));
-        verticalLayout = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(loeinFrame);
+        layoutWidget->setObjectName("layoutWidget");
+        layoutWidget->setGeometry(QRect(70, 30, 261, 131));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName("verticalLayout");
         verticalLayout->setContentsMargins(0, 0, 0, 0);
         gridLayout = new QGridLayout();
         gridLayout->setObjectName("gridLayout");
-        label_2 = new QLabel(widget);
+        label_2 = new QLabel(layoutWidget);
         label_2->setObjectName("label_2");
 
         gridLayout->addWidget(label_2, 0, 0, 1, 1);
 
-        serverEdit = new QLineEdit(widget);
+        serverEdit = new QLineEdit(layoutWidget);
         serverEdit->setObjectName("serverEdit");
 
         gridLayout->addWidget(serverEdit, 0, 1, 1, 1);
 
-        label_3 = new QLabel(widget);
+        label_3 = new QLabel(layoutWidget);
         label_3->setObjectName("label_3");
 
         gridLayout->addWidget(label_3, 1, 0, 1, 1);
 
-        userName = new QLineEdit(widget);
+        userName = new QLineEdit(layoutWidget);
         userName->setObjectName("userName");
 
         gridLayout->addWidget(userName, 1, 1, 1, 1);
@@ -155,7 +155,7 @@ public:
 
         verticalLayout->addItem(verticalSpacer);
 
-        loginButton = new QPushButton(widget);
+        loginButton = new QPushButton(layoutWidget);
         loginButton->setObjectName("loginButton");
 
         verticalLayout->addWidget(loginButton);
@@ -163,20 +163,20 @@ public:
         stackedWidget->addWidget(loginPage);
         chatPage = new QWidget();
         chatPage->setObjectName("chatPage");
-        widget1 = new QWidget(chatPage);
-        widget1->setObjectName("widget1");
-        widget1->setGeometry(QRect(30, 20, 541, 291));
-        verticalLayout_2 = new QVBoxLayout(widget1);
+        layoutWidget1 = new QWidget(chatPage);
+        layoutWidget1->setObjectName("layoutWidget1");
+        layoutWidget1->setGeometry(QRect(30, 20, 541, 291));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget1);
         verticalLayout_2->setObjectName("verticalLayout_2");
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName("horizontalLayout");
-        roomTexitEdit = new QTextEdit(widget1);
+        roomTexitEdit = new QTextEdit(layoutWidget1);
         roomTexitEdit->setObjectName("roomTexitEdit");
 
         horizontalLayout->addWidget(roomTexitEdit);
 
-        userListWidget = new QListWidget(widget1);
+        userListWidget = new QListWidget(layoutWidget1);
         userListWidget->setObjectName("userListWidget");
         userListWidget->setMaximumSize(QSize(120, 16777215));
 
@@ -187,17 +187,17 @@ public:
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName("horizontalLayout_2");
-        sayLineEdit = new QLineEdit(widget1);
+        sayLineEdit = new QLineEdit(layoutWidget1);
         sayLineEdit->setObjectName("sayLineEdit");
 
         horizontalLayout_2->addWidget(sayLineEdit);
 
-        sayButton = new QPushButton(widget1);
+        sayButton = new QPushButton(layoutWidget1);
         sayButton->setObjectName("sayButton");
 
         horizontalLayout_2->addWidget(sayButton);
 
-        logoutButton = new QPushButton(widget1);
+        logoutButton = new QPushButton(layoutWidget1);
         logoutButton->setObjectName("logoutButton");
 
         horizontalLayout_2->addWidget(logoutButton);
