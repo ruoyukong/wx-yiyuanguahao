@@ -68,6 +68,7 @@ private slots:
     void toggleFullScreen(bool checked);
     void UpdatePlaybackProgress();
     void UpdateTotalDuration();
+    void viewResized(const QRect &viewRect);
 
 private:
     // 成员变量

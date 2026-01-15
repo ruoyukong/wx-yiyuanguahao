@@ -22,9 +22,10 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QGraphicsColorizeEffect>
+#include <QGraphicsView>
 
-// 全局信号量：限制同时获取时长的线程数
-static QSemaphore durationFetchSemaphore(2);
+    // 全局信号量：限制同时获取时长的线程数
+    static QSemaphore durationFetchSemaphore(2);
 
 // 构造函数实现
 MyWidget::MyWidget(QWidget *parent)
@@ -46,18 +47,16 @@ MyWidget::MyWidget(QWidget *parent)
     , progressUpdateTimer(new QTimer(this))
 {
     ui->setupUi(this);
-
     setWindowTitle(tr("士麦那视频播放器"));
 
     // ========== 核心优化：消除所有页面空白，界面完全占满 ==========
-    // 1. 主窗口布局无内边距、无间距
     QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(this->layout());
     if (mainLayout) {
         mainLayout->setContentsMargins(0, 0, 0, 0);
         mainLayout->setSpacing(0);
     }
 
-    // 2. 使用 QGraphicsView 替代 QVideoWidget
+    // ========== 初始化 QGraphicsView ==========
     videoView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     videoView->setStyleSheet("background-color: black; border: none;");
     videoView->setContentsMargins(0, 0, 0, 0);
@@ -74,7 +73,7 @@ MyWidget::MyWidget(QWidget *parent)
     scene->addItem(videoItem);
     videoView->setScene(scene);
 
-    // 3. 用 ui->widget1 承载 videoView
+    // ========== 将 videoView 放入 widget1 ==========
     QVBoxLayout *videoLayout = new QVBoxLayout(ui->widget1);
     videoLayout->setContentsMargins(0, 0, 0, 0);
     videoLayout->setSpacing(0);
@@ -84,10 +83,8 @@ MyWidget::MyWidget(QWidget *parent)
     ui->widget1->setLayout(videoLayout);
     ui->widget1->setContentsMargins(0, 0, 0, 0);
     ui->widget1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->widget1->setMinimumSize(0, 0);
-    ui->widget1->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
-    // 4. 下方控件布局优化，减少冗余空白
+    // ========== 下方控件布局优化 ==========
     QVBoxLayout *bottomLayout = qobject_cast<QVBoxLayout*>(ui->verticalLayout);
     if (bottomLayout) {
         bottomLayout->setContentsMargins(0, 0, 0, 0);
@@ -95,7 +92,7 @@ MyWidget::MyWidget(QWidget *parent)
     }
     ui->verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-    // 5. 设置拉伸比例
+    // ========== 设置主布局拉伸比例 ==========
     if (mainLayout) {
         mainLayout->setStretchFactor(ui->widget1, 99);
         mainLayout->setStretchFactor(ui->verticalLayout, 1);
@@ -117,7 +114,7 @@ MyWidget::MyWidget(QWidget *parent)
     slider_brightness->setValue(0);
     slider_brightness->setContentsMargins(0, 0, 0, 0);
 
-    // ========== 播放列表：白底黑字设置 ==========
+    // ========== 播放列表样式 ==========
     playlistView->setStyleSheet(R"(
         QTableView {
             background-color: white;
@@ -151,10 +148,7 @@ MyWidget::MyWidget(QWidget *parent)
     playlistView->setSelectionMode(QAbstractItemView::SingleSelection);
     playlistView->setSelectionBehavior(QAbstractItemView::SelectRows);
     playlistView->setShowGrid(false);
-    playlistView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     playlistView->setContextMenuPolicy(Qt::CustomContextMenu);
-    playlistView->setContentsMargins(0, 0, 0, 0);
-    // 连接 clicked 信号到现有 TableClicked 函数
     connect(playlistView, &QTableView::clicked, this, &MyWidget::TableClicked);
 
     // ========== 系统托盘 ==========
@@ -177,7 +171,7 @@ MyWidget::MyWidget(QWidget *parent)
     videoView->setContextMenuPolicy(Qt::CustomContextMenu);
     createContextMenu();
 
-    // ========== 进度滑块自动跟随 + 总时长更新 ==========
+    // ========== 进度更新 ==========
     progressUpdateTimer->setInterval(50);
     connect(progressUpdateTimer, &QTimer::timeout, this, &MyWidget::UpdatePlaybackProgress);
     connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &MyWidget::UpdateTotalDuration);
@@ -189,7 +183,7 @@ MyWidget::MyWidget(QWidget *parent)
         }
     });
 
-    // ========== 按钮初始状态 ==========
+    // ========== 初始按钮状态 ==========
     ui->btStart->setEnabled(false);
     ui->btReset->setEnabled(false);
     ui->btLast->setEnabled(false);
@@ -210,79 +204,65 @@ void MyWidget::updateVideoBrightness()
 {
     int value = slider_brightness->value();
 
-    // 移除已有的效果
+    // 移除已有效果
     videoItem->setGraphicsEffect(nullptr);
 
     if (value != 0) {
-        // 创建颜色化效果
-        QGraphicsColorizeEffect *colorizeEffect = new QGraphicsColorizeEffect(this);
+        QGraphicsColorizeEffect *effect = new QGraphicsColorizeEffect(this);
 
         if (value < 0) {
-            // 变暗：使用黑色，强度根据滑块值计算
-            colorizeEffect->setColor(Qt::black);
-            // 将 -100~0 映射到 0~1 的强度
+            effect->setColor(Qt::black);
             float strength = qAbs(value) / 100.0f;
-            colorizeEffect->setStrength(strength * 0.8f); // 限制最大强度为0.8，避免完全变黑
+            effect->setStrength(strength * 0.8f);
         } else {
-            // 变亮：使用白色，需要不同的方法
-            // 使用透明度叠加的方法来模拟变亮
-            QGraphicsOpacityEffect *opacityEffect = new QGraphicsOpacityEffect(this);
-
-            // 创建一个小部件用于白色覆盖
-            // 注意：由于我们使用 QGraphicsVideoItem，需要特殊处理
-            // 这里采用调整视频亮度属性的方法
-
-            // 对于变亮，我们可以调整视频的亮度/对比度
-            // 但由于 Qt 没有直接API，使用颜色矩阵变换
-            QGraphicsColorizeEffect *brightnessEffect = new QGraphicsColorizeEffect(this);
-            brightnessEffect->setColor(Qt::white);
-
-            // 将 0~100 映射到 0~0.5 的强度（避免完全变白）
-            float brightnessStrength = value / 200.0f;
-            brightnessEffect->setStrength(brightnessStrength);
-
-            videoItem->setGraphicsEffect(brightnessEffect);
-            return;
+            effect->setColor(Qt::white);
+            float strength = value / 100.0f;
+            effect->setStrength(strength * 0.5f); // 控制最大变亮强度
         }
 
-        videoItem->setGraphicsEffect(colorizeEffect);
+        videoItem->setGraphicsEffect(effect);
     }
 }
 
-// ========== 更新视频尺寸 ==========
+// ========== 更新视频尺寸（关键修复） ==========
 void MyWidget::updateVideoGeometry()
 {
-    if (!videoItem || !videoView) return;
+    if (!videoItem || !videoView || !videoView->scene()) return;
 
-    // 获取视频原始尺寸
     QSizeF videoSize = videoItem->nativeSize();
     if (videoSize.isEmpty()) {
         videoSize = QSizeF(640, 480); // 默认尺寸
     }
 
-    // 获取视图尺寸
-    QRectF viewRect = videoView->sceneRect();
-    if (viewRect.isEmpty()) {
-        viewRect = videoView->rect();
-    }
+    QRectF viewRect = videoView->viewport()->rect(); // 视图实际可视区域
+    if (viewRect.isEmpty()) return;
 
-    // 计算保持宽高比的最佳尺寸
     qreal videoAspect = videoSize.width() / videoSize.height();
     qreal viewAspect = viewRect.width() / viewRect.height();
 
+    // 计算最佳缩放尺寸（保持宽高比）
+    QSizeF targetSize;
     if (videoAspect > viewAspect) {
         // 视频更宽，按宽度缩放
         qreal newHeight = viewRect.width() / videoAspect;
-        videoItem->setSize(QSizeF(viewRect.width(), newHeight));
+        targetSize = QSizeF(viewRect.width(), newHeight);
     } else {
         // 视频更高，按高度缩放
         qreal newWidth = viewRect.height() * videoAspect;
-        videoItem->setSize(QSizeF(newWidth, viewRect.height()));
+        targetSize = QSizeF(newWidth, viewRect.height());
     }
 
+    // 设置视频项大小
+    videoItem->setSize(targetSize);
+
     // 居中显示
-    videoItem->setPos((viewRect.width() - videoItem->size().width()) / 2,
-                      (viewRect.height() - videoItem->size().height()) / 2);
+    QPointF center = viewRect.center();
+    QPointF itemCenter = videoItem->boundingRect().center();
+    QPointF offset = center - itemCenter;
+    videoItem->setPos(offset);
+
+    // 通知视图重绘
+    videoView->update();
 }
 
 // ========== 进度实时更新 ==========
@@ -315,7 +295,6 @@ void MyWidget::UpdateTotalDuration()
     qint64 totalDuration = mediaPlayer->duration();
     QTime totalTime(0, (totalDuration / 60000) % 60, (totalDuration / 1000) % 60);
     ui->totaltime->setText(totalTime.toString("mm:ss"));
-
     ui->times->setRange(0, 1000);
 }
 
@@ -354,7 +333,7 @@ void MyWidget::PlayCurrent()
 {
     if (currentIndex < 0 || currentIndex >= sources.size()) return;
 
-    // 先移除效果，播放时重新应用
+    // 清除旧效果
     videoItem->setGraphicsEffect(nullptr);
 
     mediaPlayer->setSource(sources[currentIndex]);
@@ -363,8 +342,14 @@ void MyWidget::PlayCurrent()
     playlistView->selectRow(currentIndex);
     change_action_state();
 
-    // 延迟应用亮度效果，确保视频已加载
-    QTimer::singleShot(100, this, &MyWidget::updateVideoBrightness);
+    // 延迟应用亮度效果 + 主动触发视频尺寸适配（解决初期视频过小问题）
+    QTimer::singleShot(100, this, [this]() {
+        updateVideoBrightness();
+        updateVideoGeometry(); // 关键补充：主动调用尺寸适配，无需等待窗口变化
+    });
+
+    // 额外补充：立即调用一次（防止延迟期间视频仍显示过小，可选，增强效果）
+    updateVideoGeometry();
 
     logToFile(QString("播放视频：") + sources[currentIndex].toLocalFile());
 }
@@ -458,13 +443,10 @@ void MyWidget::SetPlayListShown()
 {
     if (playlistView->isHidden()) {
         QRect screenGeometry = QApplication::primaryScreen()->availableGeometry();
-
         int x = screenGeometry.center().x() - playlistView->width() / 2;
         int y = screenGeometry.center().y() - playlistView->height() / 2;
-
         x = qMax(screenGeometry.left(), x);
         y = qMax(screenGeometry.top(), y);
-
         playlistView->move(x, y);
         playlistView->show();
         playlistView->raise();
@@ -500,7 +482,6 @@ void MyWidget::showContextMenu(const QPoint &pos)
 
 void MyWidget::aspectChanged(QAction *action)
 {
-    // 保持宽高比设置
     updateVideoGeometry();
 }
 
@@ -620,7 +601,7 @@ void MyWidget::on_btReset_clicked()
 {
     mediaPlayer->stop();
     ui->btStart->setText(tr("播放"));
-    updateVideoBrightness(); // 重置时更新亮度
+    updateVideoBrightness();
 }
 
 void MyWidget::on_btUpload_clicked()
@@ -734,4 +715,10 @@ void MyWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     updateVideoGeometry();
+}
+void MyWidget::viewResized(const QRect &rect)
+{
+
+    Q_UNUSED(rect);
+    updateVideoGeometry(); // 例如触发视频重绘
 }
