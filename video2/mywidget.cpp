@@ -191,7 +191,7 @@ void MyWidget::initTrayAndMenu()
     QActionGroup *aspectGroup = new QActionGroup(aspectMenu);
     aspectGroup->setExclusive(true);
     addCheckableAction(aspectMenu, aspectGroup, tr("自动"), true);
-    addCheckableAction(aspectMenu, aspectGroup, tr("16:9"));
+    addCheckableAction(aspectMenu, aspectGroup, tr("16:9"),false);
 
 
     // 缩放模式菜单（同上，简化重复代码）
@@ -199,7 +199,7 @@ void MyWidget::initTrayAndMenu()
     QActionGroup *scaleGroup = new QActionGroup(scaleMenu);
     scaleGroup->setExclusive(true);
     addCheckableAction(scaleMenu, scaleGroup, tr("不缩放"), true);
-    addCheckableAction(scaleMenu, scaleGroup, tr("1.2倍缩放"));
+    addCheckableAction(scaleMenu, scaleGroup, tr("1.2倍缩放"),false);
 
     // 全屏 Action（保留原功能）
     QAction *fullScreenAction = mainMenu->addAction(tr("全屏"));
