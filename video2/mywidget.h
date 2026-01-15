@@ -12,7 +12,10 @@
 #include <QSlider>
 #include <QTableView>
 #include <QCloseEvent>
-#include "playlistmodel.h" // 保留对现有 playlistmodel.h 的引用，获取 MediaInfo 和 PlaylistModel
+#include <QResizeEvent>
+#include <QPoint>
+#include <QTime>
+#include "playlistmodel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MyWidget; }
@@ -28,6 +31,8 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    // 修正：resizeEvent 是保护成员函数（属于窗口事件重写），移到 protected 下
+    void resizeEvent(QResizeEvent *event) override;
 
 private slots:
     // 自动关联槽函数（Qt命名规则：on_控件对象名_信号名）
@@ -59,6 +64,10 @@ private slots:
     void TrayIconActivated(QSystemTrayIcon::ActivationReason reason);
     void importPlaylist();
     void exportPlaylist();
+    void toggleFullScreen(bool checked);
+    void UpdatePlaybackProgress();
+    void UpdateTotalDuration();
+
 
 private:
     // 成员变量
@@ -76,12 +85,15 @@ private:
     PlaylistModel *playlistModel; // 直接使用 playlistmodel.h 中的 PlaylistModel 类
     QTableView *playlistView;
     QWidget *brightnessOverlay;
+    bool isFullScreenMode;
 
     // 工具函数
     QString getMediaDuration(const QUrl& mediaUrl);
     void logToFile(const QString &content);
     void OpenFile();
     void PlayCurrent();
+    void updateBrightnessOverlayGeometry();
+    QTimer *progressUpdateTimer; // 新增：进度更新定时器
 };
 
 #endif // MYWIDGET_H

@@ -1,6 +1,6 @@
 #include "mywidget.h"
 #include "ui_mywidget.h"
-#include "playlistmodel.h" // 保留对现有 playlistmodel.h 的引用
+#include "playlistmodel.h"
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QIcon>
@@ -19,6 +19,7 @@
 #include <QSemaphore>
 #include <QResizeEvent>
 #include <QCloseEvent>
+#include <QTimer>
 
 // 全局信号量：限制同时获取时长的线程数
 static QSemaphore durationFetchSemaphore(2);
@@ -28,7 +29,7 @@ MyWidget::MyWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MyWidget)
     , mediaPlayer(new QMediaPlayer(this))
-    , videoWidget(new QVideoWidget(this)) // 直接使用原生 QVideoWidget
+    , videoWidget(new QVideoWidget(this))
     , audioOutput(new QAudioOutput(this))
     , currentIndex(-1)
     , tray_icon(nullptr)
@@ -38,12 +39,13 @@ MyWidget::MyWidget(QWidget *parent)
     , currentColor(Qt::white)
     , playlistModel(new PlaylistModel(this))
     , playlistView(new QTableView(this))
-    , brightnessOverlay(new QWidget(videoWidget)) // 父控件设为 videoWidget
+    , brightnessOverlay(new QWidget(videoWidget))
+    , isFullScreenMode(false)
+    , progressUpdateTimer(new QTimer(this))
 {
     ui->setupUi(this);
 
     setWindowTitle(tr("士麦那视频播放器"));
-    setWindowIcon(QIcon(":/images/icon.png"));
 
     // ========== 核心优化：消除所有页面空白，界面完全占满 ==========
     // 1. 主窗口布局无内边距、无间距
@@ -57,16 +59,43 @@ MyWidget::MyWidget(QWidget *parent)
     videoWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     videoWidget->setStyleSheet("background-color: black;");
     videoWidget->setContentsMargins(0, 0, 0, 0);
+    videoWidget->setMinimumSize(0, 0);
+    videoWidget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 
-    // 3. tableWidget 布局无内边距、无间距，承载videoWidget
-    QVBoxLayout *videoLayout = new QVBoxLayout(ui->tableWidget);
+    // 3. 同步修改：用 ui->widget1 承载 videoWidget（替换原 ui->tableWidget）
+    QVBoxLayout *videoLayout = new QVBoxLayout(ui->widget1);
     videoLayout->setContentsMargins(0, 0, 0, 0);
     videoLayout->setSpacing(0);
     videoLayout->addWidget(videoWidget);
-    ui->tableWidget->setLayout(videoLayout);
-    ui->tableWidget->setContentsMargins(0, 0, 0, 0);
+    videoLayout->setStretchFactor(videoWidget, 1);
 
-    // 4. 下方控件布局优化，减少冗余空白（保留最小间距，无多余内边距）
+    // ========== 亮度叠加层优化：强绑定 videoWidget 布局，确保联动 ==========
+    brightnessOverlay->setGeometry(videoWidget->rect());
+    brightnessOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
+    brightnessOverlay->setAttribute(Qt::WA_OpaquePaintEvent, false); // 允许半透明渲染
+    brightnessOverlay->setStyleSheet("background-color: rgba(0,0,0,0);");
+    brightnessOverlay->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *overlayLayout = new QVBoxLayout(brightnessOverlay);
+    overlayLayout->setContentsMargins(0, 0, 0, 0);
+    overlayLayout->setSpacing(0);
+    brightnessOverlay->setLayout(overlayLayout);
+    // 关键：将 brightnessOverlay 加入 videoWidget 内部布局，实现强绑定
+    QVBoxLayout *innerVideoLayout = new QVBoxLayout(videoWidget);
+    innerVideoLayout->setContentsMargins(0, 0, 0, 0);
+    innerVideoLayout->setSpacing(0);
+    innerVideoLayout->addWidget(brightnessOverlay);
+    videoWidget->setLayout(innerVideoLayout);
+    // 强制置顶，避免被视频画面覆盖
+    brightnessOverlay->raise();
+    brightnessOverlay->show();
+
+    ui->widget1->setLayout(videoLayout);
+    ui->widget1->setContentsMargins(0, 0, 0, 0);
+    ui->widget1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->widget1->setMinimumSize(0, 0);
+    ui->widget1->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+
+    // 4. 下方控件布局优化，减少冗余空白
     QVBoxLayout *bottomLayout = qobject_cast<QVBoxLayout*>(ui->verticalLayout);
     if (bottomLayout) {
         bottomLayout->setContentsMargins(0, 0, 0, 0);
@@ -74,30 +103,18 @@ MyWidget::MyWidget(QWidget *parent)
     }
     ui->verticalLayout->setContentsMargins(0, 0, 0, 0);
 
-    // 5. 设置拉伸比例，确保视频区域占满绝大部分，下方控件不占用多余空间
+    // 5. 设置拉伸比例
     if (mainLayout) {
-        mainLayout->setStretchFactor(ui->tableWidget, 99);
+        mainLayout->setStretchFactor(ui->widget1, 99);
         mainLayout->setStretchFactor(ui->verticalLayout, 1);
     }
-
-    // ========== 亮度叠加层：自动填满videoWidget，无空白，无需resize监听 ==========
-    brightnessOverlay->setGeometry(videoWidget->rect());
-    brightnessOverlay->setAttribute(Qt::WA_TransparentForMouseEvents);
-    brightnessOverlay->setStyleSheet("background-color: rgba(0,0,0,0);");
-    brightnessOverlay->setContentsMargins(0, 0, 0, 0);
-    // 关键：设置布局使其自动拉伸，无空白
-    QVBoxLayout *overlayLayout = new QVBoxLayout(brightnessOverlay);
-    overlayLayout->setContentsMargins(0, 0, 0, 0);
-    overlayLayout->setSpacing(0);
-    brightnessOverlay->setLayout(overlayLayout);
-    brightnessOverlay->show(); // 始终显示，靠透明度控制
 
     // ========== 播放器初始化 ==========
     mediaPlayer->setVideoOutput(videoWidget);
     mediaPlayer->setAudioOutput(audioOutput);
     audioOutput->setVolume(0.5);
 
-    // ========== 播放进度滑块（直接关联值变化，无手动connect）==========
+    // ========== 播放进度滑块初始化 ==========
     QSlider *seek_slider = ui->times;
     seek_slider->setRange(0, 1000);
     seek_slider->setContentsMargins(0, 0, 0, 0);
@@ -108,7 +125,32 @@ MyWidget::MyWidget(QWidget *parent)
     slider_brightness->setValue(0);
     slider_brightness->setContentsMargins(0, 0, 0, 0);
 
-    // ========== 播放列表 ==========
+    // ========== 播放列表：白底黑字设置 ==========
+    playlistView->setStyleSheet(R"(
+        QTableView {
+            background-color: white;
+            color: black;
+            border: 1px solid #cccccc;
+            gridline-color: #eeeeee;
+        }
+        QTableView::header {
+            background-color: #f5f5f5;
+            color: black;
+        }
+        QTableView::item:selected {
+            background-color: #add8e6;
+            color: black;
+        }
+    )");
+    QPalette playlistPalette = playlistView->palette();
+    playlistPalette.setColor(QPalette::Base, Qt::white);
+    playlistPalette.setColor(QPalette::Text, Qt::black);
+    playlistPalette.setColor(QPalette::Highlight, QColor(173, 216, 230));
+    playlistPalette.setColor(QPalette::HighlightedText, Qt::black);
+    playlistView->setPalette(playlistPalette);
+    playlistView->setAttribute(Qt::WA_OpaquePaintEvent, true);
+
+    // ========== 播放列表初始化 ==========
     playlistView->setModel(playlistModel);
     playlistView->setColumnWidth(0, 200);
     playlistView->setWindowTitle(tr("播放列表"));
@@ -120,6 +162,8 @@ MyWidget::MyWidget(QWidget *parent)
     playlistView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     playlistView->setContextMenuPolicy(Qt::CustomContextMenu);
     playlistView->setContentsMargins(0, 0, 0, 0);
+    // 关键：连接 clicked 信号到现有 TableClicked 函数，实现点击切换视频
+    connect(playlistView, &QTableView::clicked, this, &MyWidget::TableClicked);
 
     // ========== 系统托盘 ==========
     tray_icon = new QSystemTrayIcon(QIcon(":/images/icon.png"), this);
@@ -141,6 +185,18 @@ MyWidget::MyWidget(QWidget *parent)
     videoWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     createContextMenu();
 
+    // ========== 进度滑块自动跟随 + 总时长更新 ==========
+    progressUpdateTimer->setInterval(50);
+    connect(progressUpdateTimer, &QTimer::timeout, this, &MyWidget::UpdatePlaybackProgress);
+    connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &MyWidget::UpdateTotalDuration);
+    connect(mediaPlayer, &QMediaPlayer::playbackStateChanged, this, [this](QMediaPlayer::PlaybackState state) {
+        if (state == QMediaPlayer::PlayingState) {
+            progressUpdateTimer->start();
+        } else {
+            progressUpdateTimer->stop();
+        }
+    });
+
     // ========== 按钮初始状态 ==========
     ui->btStart->setEnabled(false);
     ui->btReset->setEnabled(false);
@@ -154,7 +210,41 @@ MyWidget::~MyWidget()
     delete ui;
 }
 
-// ========== 工具函数（保持不变，兼容现有 playlistmodel.h）==========
+// ========== 进度实时更新 ==========
+void MyWidget::UpdatePlaybackProgress()
+{
+    if (!mediaPlayer || mediaPlayer->duration() <= 0) return;
+
+    qint64 currentPos = mediaPlayer->position();
+    qint64 totalDuration = mediaPlayer->duration();
+    int sliderValue = static_cast<int>((static_cast<qint64>(1000) * currentPos) / totalDuration);
+
+    if (ui->times->value() != sliderValue) {
+        ui->times->blockSignals(true);
+        ui->times->setValue(sliderValue);
+        ui->times->blockSignals(false);
+    }
+
+    QTime currentTime(0, (currentPos / 60000) % 60, (currentPos / 1000) % 60);
+    ui->time->setText(currentTime.toString("mm:ss"));
+}
+
+// ========== 总时长更新 ==========
+void MyWidget::UpdateTotalDuration()
+{
+    if (!mediaPlayer || mediaPlayer->duration() <= 0) {
+        ui->totaltime->setText("00:00");
+        return;
+    }
+
+    qint64 totalDuration = mediaPlayer->duration();
+    QTime totalTime(0, (totalDuration / 60000) % 60, (totalDuration / 1000) % 60);
+    ui->totaltime->setText(totalTime.toString("mm:ss"));
+
+    ui->times->setRange(0, 1000);
+}
+
+// ========== 工具函数 ==========
 QString MyWidget::getMediaDuration(const QUrl& mediaUrl)
 {
     QMediaPlayer tempPlayer;
@@ -206,7 +296,7 @@ void MyWidget::TableClicked(const QModelIndex &index)
 void MyWidget::ClearSources()
 {
     sources.clear();
-    playlistModel->clear(); // 直接调用现有 playlistmodel.h 中的 clear 方法
+    playlistModel->clear();
     currentIndex = -1;
     mediaPlayer->stop();
     ui->btStart->setText(tr("播放"));
@@ -247,6 +337,7 @@ void MyWidget::createContextMenu()
 
     QAction *fullScreenAction = mainMenu->addAction(tr("全屏"));
     fullScreenAction->setCheckable(true);
+    connect(fullScreenAction, &QAction::toggled, this, &MyWidget::toggleFullScreen);
 
     mainMenu->addSeparator();
     mainMenu->addAction(tr("导入播放列表"), this, &MyWidget::importPlaylist);
@@ -283,8 +374,18 @@ void MyWidget::SkipForward()
 void MyWidget::SetPlayListShown()
 {
     if (playlistView->isHidden()) {
-        playlistView->move(frameGeometry().bottomLeft());
+        QRect screenGeometry = QApplication::primaryScreen()->availableGeometry();
+
+        int x = screenGeometry.center().x() - playlistView->width() / 2;
+        int y = screenGeometry.center().y() - playlistView->height() / 2;
+
+        x = qMax(screenGeometry.left(), x);
+        y = qMax(screenGeometry.top(), y);
+
+        playlistView->move(x, y);
         playlistView->show();
+        playlistView->raise();
+        playlistView->activateWindow();
     } else {
         playlistView->hide();
     }
@@ -363,10 +464,9 @@ void MyWidget::importPlaylist()
                 QString duration = getMediaDuration(url);
                 durationFetchSemaphore.release();
 
-                // 直接使用 playlistmodel.h 中的 MediaInfo 结构体，无冗余定义
                 MediaInfo info{url, fi.baseName(), duration};
                 QMetaObject::invokeMethod(this, [this, info]() {
-                    playlistModel->addMedia(info); // 调用现有 playlistmodel.h 中的 addMedia 方法
+                    playlistModel->addMedia(info);
                     sources.append(info.url);
                 });
             });
@@ -390,17 +490,35 @@ void MyWidget::exportPlaylist()
 
     QTextStream stream(&file);
     for (int i = 0; i < playlistModel->mediaCount(); ++i) {
-        // 调用现有 playlistmodel.h 中的 mediaAt 方法
         stream << playlistModel->mediaAt(i).url.toLocalFile() << "\n";
     }
     file.close();
     logToFile(QString("导出播放列表：") + path);
 }
 
-// ========== 按钮槽函数（所有功能内联，无手动connect，兼容现有 playlistmodel.h）==========
+void MyWidget::toggleFullScreen(bool checked)
+{
+    if (checked) {
+        this->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+        this->showFullScreen();
+        isFullScreenMode = true;
+    } else {
+        this->setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+        this->showNormal();
+        isFullScreenMode = false;
+    }
+
+    if (videoWidget) {
+        isFullScreenMode ? videoWidget->setGeometry(this->rect()) : videoWidget->setGeometry(ui->widget1->rect());
+    }
+    updateBrightnessOverlayGeometry();
+    this->layout()->update();
+    this->adjustSize();
+}
+
+// ========== 按钮槽函数 ==========
 void MyWidget::on_btLast_clicked()
 {
-    // 上一个视频功能
     if (sources.isEmpty() || currentIndex <= 0) return;
     currentIndex--;
     PlayCurrent();
@@ -408,7 +526,6 @@ void MyWidget::on_btLast_clicked()
 
 void MyWidget::on_btNext_clicked()
 {
-    // 下一个视频功能
     if (sources.isEmpty() || currentIndex >= static_cast<int>(sources.size()) - 1) return;
     currentIndex++;
     PlayCurrent();
@@ -416,7 +533,6 @@ void MyWidget::on_btNext_clicked()
 
 void MyWidget::on_btStart_clicked()
 {
-    // 播放/暂停切换功能
     if (mediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
         mediaPlayer->pause();
         ui->btStart->setText(tr("播放"));
@@ -430,14 +546,12 @@ void MyWidget::on_btStart_clicked()
 
 void MyWidget::on_btReset_clicked()
 {
-    // 停止播放功能
     mediaPlayer->stop();
     ui->btStart->setText(tr("播放"));
 }
 
 void MyWidget::on_btUpload_clicked()
 {
-    // 打开文件功能
     QStringList files = QFileDialog::getOpenFileNames(
         this, tr("打开媒体文件"),
         QStandardPaths::writableLocation(QStandardPaths::MoviesLocation),
@@ -456,10 +570,9 @@ void MyWidget::on_btUpload_clicked()
             QString duration = getMediaDuration(url);
             durationFetchSemaphore.release();
 
-            // 直接使用 playlistmodel.h 中的 MediaInfo 结构体
             MediaInfo info{url, fi.baseName(), duration};
             QMetaObject::invokeMethod(this, [this, info]() {
-                playlistModel->addMedia(info); // 调用现有 playlistmodel.h 中的 addMedia 方法
+                playlistModel->addMedia(info);
             });
         });
         logToFile(QString("打开文件：") + f);
@@ -474,10 +587,17 @@ void MyWidget::on_btUpload_clicked()
 
 void MyWidget::on_btList_clicked()
 {
-    // 显示/隐藏播放列表功能
     if (playlistView->isHidden()) {
-        playlistView->move(frameGeometry().bottomLeft());
+        QRect screenRect = QApplication::primaryScreen()->availableGeometry();
+        QSize listSize = playlistView->size();
+        int x = screenRect.center().x() - listSize.width() / 2;
+        int y = screenRect.center().y() - listSize.height() / 2;
+        x = qMax(screenRect.left(), qMin(x, screenRect.right() - listSize.width()));
+        y = qMax(screenRect.top(), qMin(y, screenRect.bottom() - listSize.height()));
+        playlistView->move(x, y);
         playlistView->show();
+        playlistView->raise();
+        playlistView->activateWindow();
     } else {
         playlistView->hide();
     }
@@ -485,7 +605,6 @@ void MyWidget::on_btList_clicked()
 
 void MyWidget::on_btExport_clicked()
 {
-    // 导出播放列表功能（内联实现，调用现有 playlistmodel.h 接口）
     QString path = QFileDialog::getSaveFileName(this, tr("导出播放列表"), "", "文本文件 (*.txt)");
     if (path.isEmpty()) return;
 
@@ -497,7 +616,6 @@ void MyWidget::on_btExport_clicked()
 
     QTextStream stream(&file);
     for (int i = 0; i < playlistModel->mediaCount(); ++i) {
-        // 调用现有 playlistmodel.h 中的 mediaAt 方法
         stream << playlistModel->mediaAt(i).url.toLocalFile() << "\n";
     }
     file.close();
@@ -506,37 +624,52 @@ void MyWidget::on_btExport_clicked()
 
 void MyWidget::on_btClose_clicked()
 {
-    // 关闭程序功能（内联实现）
     qApp->quit();
 }
 
 void MyWidget::on_slider_valueChanged(int value)
 {
-    // 音量调节功能（内联实现）
     double volume = static_cast<double>(value) / 100.0;
     audioOutput->setVolume(volume);
 }
 
 void MyWidget::on_times_valueChanged(int value)
 {
-    // 播放进度调节功能（内联实现，对应times滑块）
-    if (mediaPlayer->duration() > 0) {
-        mediaPlayer->setPosition(static_cast<qint64>(value * mediaPlayer->duration() / 1000.0));
-    }
+    if (!mediaPlayer || mediaPlayer->duration() <= 0) return;
+
+    qint64 targetPos = static_cast<qint64>((static_cast<qint64>(value) * mediaPlayer->duration()) / 1000);
+    mediaPlayer->setPosition(targetPos);
+
+    QTime currentTime(0, (targetPos / 60000) % 60, (targetPos / 1000) % 60);
+    ui->time->setText(currentTime.toString("mm:ss"));
 }
 
+// ========== 亮度调节优化（仅修改现有函数） ==========
 void MyWidget::on_lights_valueChanged(int value)
 {
-    // 亮度调节功能（内联实现，对应lights滑块）
+    if (!brightnessOverlay) return;
+
+    // 强制双层置顶，确保不被视频画面覆盖
+    brightnessOverlay->raise();
+    videoWidget->raise();
+    brightnessOverlay->raise();
+
+    // 准确计算透明度
+    int alpha = qMin(255, qAbs(static_cast<int>(value * 2.55)));
+    QString styleSheet;
+
     if (value == 0) {
-        brightnessOverlay->setStyleSheet("background-color: rgba(0,0,0,0);");
+        styleSheet = "background-color: rgba(0,0,0,0);";
     } else if (value < 0) {
-        int alpha = qMin(255, static_cast<int>(qAbs(value) * 2.55));
-        brightnessOverlay->setStyleSheet(QString("background-color: rgba(0,0,0,%1);").arg(alpha));
+        styleSheet = QString("background-color: rgba(0, 0, 0, %1);").arg(alpha);
     } else {
-        int alpha = qMin(255, static_cast<int>(value * 2.55));
-        brightnessOverlay->setStyleSheet(QString("background-color: rgba(255,255,255,%1);").arg(alpha));
+        styleSheet = QString("background-color: rgba(255, 255, 255, %1);").arg(alpha);
     }
+
+    // 强制立即重绘，解决样式缓存滞后
+    brightnessOverlay->setStyleSheet(styleSheet);
+    brightnessOverlay->repaint();
+    videoWidget->repaint();
 }
 
 void MyWidget::closeEvent(QCloseEvent *event)
@@ -545,3 +678,37 @@ void MyWidget::closeEvent(QCloseEvent *event)
     tray_icon->showMessage(tr("士麦那视频播放器"), tr("单击我重新回到主界面"), QSystemTrayIcon::Information, 2000);
     event->ignore();
 }
+
+void MyWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    if (videoWidget && isFullScreenMode) {
+        videoWidget->setGeometry(this->rect());
+    } else if (videoWidget) {
+        videoWidget->setGeometry(ui->widget1->rect());
+    }
+
+    updateBrightnessOverlayGeometry();
+
+    if (this->layout()) {
+        this->layout()->update();
+    }
+    videoWidget->update();
+    brightnessOverlay->update();
+}
+
+// ========== 亮度叠加层尺寸更新优化 ==========
+void MyWidget::updateBrightnessOverlayGeometry()
+{
+    if (brightnessOverlay && videoWidget) {
+        brightnessOverlay->setGeometry(videoWidget->rect());
+        if (brightnessOverlay->layout()) {
+            brightnessOverlay->layout()->update();
+        }
+        // 强制置顶+重绘，确保尺寸变化后亮度效果不丢失
+        brightnessOverlay->raise();
+        brightnessOverlay->repaint();
+    }
+}
+
