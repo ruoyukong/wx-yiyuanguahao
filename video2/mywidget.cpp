@@ -86,7 +86,8 @@ void MyWidget::initLayoutSetting()
     videoView->setStyleSheet("background-color: black; border: none;");
     videoView->setContentsMargins(0, 0, 0, 0);
     videoView->setRenderHint(QPainter::Antialiasing, false);
-    videoView->setScrollBarPolicy(Qt::ScrollBarAlwaysOff); // 合并水平/垂直滚动条设置
+    videoView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    videoView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     videoView->setFrameShape(QFrame::NoFrame);
     videoView->setAlignment(Qt::AlignCenter);
 
@@ -191,7 +192,7 @@ void MyWidget::initTrayAndMenu()
     aspectGroup->setExclusive(true);
     addCheckableAction(aspectMenu, aspectGroup, tr("自动"), true);
     addCheckableAction(aspectMenu, aspectGroup, tr("16:9"));
-    addCheckableAction(aspectMenu, aspectGroup, tr("4:3"));
+
 
     // 缩放模式菜单（同上，简化重复代码）
     QMenu *scaleMenu = mainMenu->addMenu(tr("缩放模式"));
@@ -230,7 +231,11 @@ void MyWidget::initSignalConnection()
     connect(progressUpdateTimer, &QTimer::timeout, this, &MyWidget::UpdatePlaybackProgress);
     connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &MyWidget::UpdateTotalDuration);
     connect(mediaPlayer, &QMediaPlayer::playbackStateChanged, this, [this](QMediaPlayer::PlaybackState state) {
-        progressUpdateTimer->setActive(state == QMediaPlayer::PlayingState); // 简化 start/stop 逻辑
+        if (state == QMediaPlayer::PlayingState) {
+            progressUpdateTimer->start();
+        } else {
+            progressUpdateTimer->stop();
+        }
     });
 
     // 托盘激活信号
