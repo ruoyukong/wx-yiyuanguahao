@@ -1,0 +1,121 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "dgut医院挂号"
+			}
+		},
+		{
+			"path": "pages/hospital/hospital",
+			"style": {
+				"navigationBarTitleText": "医院信息"
+			}
+		},
+		{
+			"path": "pages/agreement/agreement",
+			"style": {
+				"navigationBarTitleText": "用户协议"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+		},
+		{
+			"path": "pages/webview/webview", // 直接复制：src/pages/ 后面的路径（pages/webview/webview）
+			"style": {
+				"navigationBarTitleText": "推文",
+				// 关键：确保以下两个配置未设置为 hidden（默认显示导航栏）
+				"navigationStyle": "default" // default 表示显示导航栏，custom 是隐藏
+			}
+		},
+		{
+			"path": "pages/department/department",
+			"style": {
+				"navigationBarTitleText": "科室信息",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/schedule/schedule",
+			"style": {
+				"navigationBarTitleText": "选择挂号时间",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "医院挂号",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/record/record",
+			"style": {
+				"navigationBarTitleText": "预约记录",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/appointmentConfirm/appointmentConfirm",
+			"style": {
+				"navigationBarTitleText": "预约确认",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/record/pay",
+			"style": {
+				"navigationBarTitleText": "缴费记录",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/payment/payment",
+			"style": {
+				"navigationBarTitleText": "缴费",
+				"navigationStyle": "default"
+			}
+		},
+		{
+			"path": "pages/checklist/checklist",
+			"style": {
+				"navigationBarTitleText": "checklist"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "医院挂号",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F5F5F5"
+	},
+	"tabBar": {
+		"color": "#666",
+		"selectedColor": "#1E88E5",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/guahao-001.png",
+				"selectedIconPath": "static/guahao-002.png"
+			},
+			{
+				"pagePath": "pages/hospital/hospital",
+				"text": "医院",
+				"iconPath": "static/shouye-001.png",
+				"selectedIconPath": "static/shouye-002.png"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的",
+				"iconPath": "static/wode-001.png",
+				"selectedIconPath": "static/wode-002.png"
+			}
+		]
+	}
+}
