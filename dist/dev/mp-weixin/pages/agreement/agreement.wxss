@@ -1,0 +1,159 @@
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[1]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader/index.js??clonedRuleSet-12[0].rules[0].use[2]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[3]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/index.js??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!./src/pages/agreement/agreement.vue?vue&type=style&index=0&id=1a454adc&scoped=true&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 页面容器 */
+.agreement-container.data-v-1a454adc {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+/* 标题栏 */
+.agreement-header.data-v-1a454adc {
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  border-bottom: 1rpx solid #eee;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-title.data-v-1a454adc {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+/* 内容滚动区 */
+.agreement-content.data-v-1a454adc {
+  background-color: #fff;
+  padding: 30rpx 24rpx;
+  height: calc(100vh - 88rpx);
+}
+/* 文本内容样式 */
+.content-text.data-v-1a454adc {
+
+  line-height: 1.8;
+  font-size: 28rpx;
+  color: lab(97.73% 0.67 0.22);
+  padding: 0 30rpx; /* 左右各留30rpx距离，上下0 */
+}
+.content-text ._h3.data-v-1a454adc {
+  font-size: 34rpx;
+  color: #222;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+.content-text ._p.data-v-1a454adc {
+  margin-bottom: 20rpx;
+  text-indent: 56rpx; /* 首行缩进2字符 */
+}
+

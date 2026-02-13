@@ -1,0 +1,217 @@
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[1]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader/index.js??clonedRuleSet-12[0].rules[0].use[2]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[3]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/index.js??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!./src/pages/index/index.vue?vue&type=style&index=0&id=57280228&scoped=true&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+
+.container.data-v-57280228 {
+  background: linear-gradient(135deg, #f8fafc 0%, #e8f0fe 100%);
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+/* 轮播图样式优化 */
+.swiper-container.data-v-57280228 {
+  position: relative;
+  border-radius: 0 0 40rpx 40rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 40rpx rgba(74, 144, 226, 0.15);
+  margin: 0 24rpx; /* 左右添加边距 */
+  width: auto; /* 改为自动宽度 */
+}
+.swiper.data-v-57280228 {
+  width: 100%;
+  height: 380rpx;
+}
+.swiper-img.data-v-57280228 {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.swiper-overlay.data-v-57280228 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120rpx;
+  background: linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 100%);
+}
+
+/* 功能区域样式优化 */
+.func-container.data-v-57280228 {
+  margin: 40rpx 24rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 28rpx;
+  padding: 40rpx 0 20rpx;
+  box-shadow: 0 12rpx 40rpx rgba(74, 144, 226, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+.func-container.data-v-57280228::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #4a90e2, #67b26f);
+}
+.section-header.data-v-57280228 {
+  padding: 0 40rpx 30rpx;
+  border-bottom: 1rpx solid #f0f4f8;
+  margin-bottom: 20rpx;
+}
+.section-title.data-v-57280228 {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  margin-bottom: 8rpx;
+}
+.section-desc.data-v-57280228 {
+  font-size: 26rpx;
+  color: #888;
+  display: block;
+}
+.func-grid.data-v-57280228 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 40rpx 20rpx;
+  padding: 20rpx 40rpx;
+}
+.func-item.data-v-57280228 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 20rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6rpx 20rpx rgba(74, 144, 226, 0.08);
+  border: 1rpx solid #f0f4f8;
+}
+.func-item.data-v-57280228::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #4a90e2, #67b26f);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.func-item.data-v-57280228:active {
+  -webkit-transform: translateY(-4rpx);
+          transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 30rpx rgba(74, 144, 226, 0.15);
+}
+.func-item.data-v-57280228:active::before {
+  opacity: 1;
+}
+.func-icon-wrapper.data-v-57280228 {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8f2ff 0%, #d4e6ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+  transition: all 0.3s ease;
+  border: 2rpx solid #e8f2ff;
+}
+.func-item:active .func-icon-wrapper.data-v-57280228 {
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  background: linear-gradient(135deg, #d4e6ff 0%, #c2dcff 100%);
+}
+.func-icon.data-v-57280228 {
+  width: 60rpx;
+  height: 60rpx;
+}
+.func-text.data-v-57280228 {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+.func-item:active .func-text.data-v-57280228 {
+  color: #4a90e2;
+}
+
+/* 医院信息入口样式优化 */
+.hospital-entry.data-v-57280228 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+  margin: 30rpx 24rpx;
+  border-radius: 28rpx;
+  box-shadow: 0 8rpx 30rpx rgba(74, 144, 226, 0.08);
+  border: 1rpx solid #f0f4f8;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.hospital-entry.data-v-57280228::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4rpx;
+  background: linear-gradient(90deg, #4a90e2, #67b26f);
+}
+.hospital-entry.data-v-57280228:active {
+  -webkit-transform: translateY(-2rpx);
+          transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 35rpx rgba(74, 144, 226, 0.12);
+}
+.entry-content.data-v-57280228 {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.entry-icon.data-v-57280228 {
+  font-size: 48rpx;
+  margin-right: 24rpx;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8f2ff 0%, #d4e6ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.entry-text.data-v-57280228 {
+  display: flex;
+  flex-direction: column;
+}
+.entry-title.data-v-57280228 {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6rpx;
+}
+.entry-desc.data-v-57280228 {
+  font-size: 26rpx;
+  color: #888;
+}
+
+/* 底部装饰 */
+.bottom-decoration.data-v-57280228 {
+  text-align: center;
+  padding: 40rpx 0 20rpx;
+}
+.slogan.data-v-57280228 {
+  font-size: 26rpx;
+  color: #999;
+  font-style: italic;
+  letter-spacing: 2rpx;
+}
+

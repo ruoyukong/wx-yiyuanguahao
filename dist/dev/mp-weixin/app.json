@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/hospital/hospital",
+    "pages/agreement/agreement",
+    "pages/mine/mine",
+    "pages/webview/webview",
+    "pages/department/department",
+    "pages/schedule/schedule",
+    "pages/register/register",
+    "pages/record/record",
+    "pages/appointmentConfirm/appointmentConfirm",
+    "pages/record/pay",
+    "pages/payment/payment",
+    "pages/checklist/checklist"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "医院挂号",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#1E88E5",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/guahao-001.png",
+        "selectedIconPath": "static/guahao-002.png"
+      },
+      {
+        "pagePath": "pages/hospital/hospital",
+        "text": "医院",
+        "iconPath": "static/shouye-001.png",
+        "selectedIconPath": "static/shouye-002.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "static/wode-001.png",
+        "selectedIconPath": "static/wode-002.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

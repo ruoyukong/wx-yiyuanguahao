@@ -1,0 +1,470 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[1]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader/index.js??clonedRuleSet-12[0].rules[0].use[2]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[3]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/index.js??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!./src/pages/schedule/schedule.vue?vue&type=style&index=0&id=f8d83f34&scoped=true&lang=css& ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 页面整体背景 */
+.schedule-container.data-v-f8d83f34 {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 20rpx;
+}
+/* 页面标题 */
+.page-header.data-v-f8d83f34 {
+  font-size: 32rpx;
+  font-weight: 500;
+  text-align: center;
+  padding: 30rpx 0;
+  background-color: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+/* 日期滚动条 */
+.date-scroll.data-v-f8d83f34 {
+  white-space: nowrap;
+  background-color: #fff;
+  padding: 20rpx 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+/* 单个日期项 */
+.date-item.data-v-f8d83f34 {
+  display: inline-block;
+  width: 120rpx;
+  text-align: center;
+  margin: 0 10rpx;
+  padding: 15rpx 0;
+  border-radius: 15rpx;
+  background-color: #f0f0f0;
+}
+/* 选中的日期项 */
+.date-item.active.data-v-f8d83f34 {
+  background-color: #007aff;
+  color: #fff;
+}
+/* 过去的日期项 */
+.date-item.past.data-v-f8d83f34 {
+  opacity: 0.5;
+}
+.date-item .week-day.data-v-f8d83f34 {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+.date-item .date.data-v-f8d83f34 {
+  font-size: 24rpx;
+  margin-top: 5rpx;
+}
+/* 下周标签 */
+.next-week-tag.data-v-f8d83f34 {
+  font-size: 20rpx;
+  color: #ff5722;
+  margin-top: 5rpx;
+  font-weight: bold;
+}
+/* 内容区通用样式 */
+.content.data-v-f8d83f34 {
+  padding: 20rpx;
+}
+/* 加载中样式 */
+.loading.data-v-f8d83f34 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 0;
+}
+.loading-text.data-v-f8d83f34 {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  color: #999;
+}
+/* 排班列表样式 */
+.schedule-list.data-v-f8d83f34 {
+  background-color: #fff;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+/* 时间段标题样式 */
+.time-slot-title.data-v-f8d83f34 {
+  font-size: 28rpx;
+  font-weight: 500;
+  padding: 25rpx 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  background-color: #fafafa;
+}
+/* 医生列表容器 */
+.doctor-list.data-v-f8d83f34 {
+  padding: 20rpx;
+}
+/* 时间段内无医生时的样式 */
+.no-doctor.data-v-f8d83f34 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+  color: #999;
+  font-size: 26rpx;
+}
+.no-doctor-text.data-v-f8d83f34 {
+  margin-top: 15rpx;
+}
+/* 单个医生项 */
+.doctor-item.data-v-f8d83f34 {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.doctor-item.data-v-f8d83f34:last-child {
+  border-bottom: none;
+}
+/* 医生详情 */
+.doctor-details.data-v-f8d83f34 {
+  flex-grow: 1;
+  margin-left: 40rpx;
+}
+.doctor-info.data-v-f8d83f34 {
+  flex-grow: 1;
+}
+.doctor-name.data-v-f8d83f34 {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+.doctor-title.data-v-f8d83f34 {
+  font-size: 24rpx;
+  color: #007aff;
+  background-color: #e8f4ff;
+  padding: 2rpx 10rpx;
+  border-radius: 15rpx;
+  margin-left: 10rpx;
+}
+.doctor-good-at.data-v-f8d83f34 {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 5rpx;
+}
+.price.data-v-f8d83f34 {
+  font-size: 26rpx;
+  color: #ff5722;
+  font-weight: bold;
+  margin-top: 8rpx;
+}
+/* 预约状态区域 */
+.appointment-status.data-v-f8d83f34 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.remaining.data-v-f8d83f34 {
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+.appointment-btn.data-v-f8d83f34 {
+  width: 140rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 24rpx;
+  border-radius: 30rpx;
+  background-color: #007aff;
+  color: #fff;
+}
+.appointment-btn.disabled.data-v-f8d83f34 {
+  background-color: #cccccc;
+  color: #fff;
+}
+

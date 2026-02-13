@@ -1,0 +1,427 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[1]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader/index.js??clonedRuleSet-12[0].rules[0].use[2]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[3]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/index.js??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!./src/pages/mine/mine.vue?vue&type=style&index=0&id=dcbcfe34&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 页面整体样式（与原样式一致） */
+.container.data-v-dcbcfe34 {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+/* 用户信息区（与原样式一致） */
+.user-header.data-v-dcbcfe34 {
+  background-color: hsl(208, 100%, 88%);
+  padding: 48rpx 24rpx;
+  display: flex;
+  align-items: center;
+}
+/* 头像按钮：固定尺寸 + 禁止压缩 */
+.avatar-btn.data-v-dcbcfe34 {
+  padding: 0;
+  background: transparent;
+  border: none;
+  line-height: 1;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0; /* 关键：禁止 Flex 压缩头像尺寸 */
+  text-align: left !important;   /* 关键：阻止居中 */
+  line-height: 50rpx;            /* 与 input 内文字同高 */
+}
+/* 禁用状态完全继承样式，无变化 */
+.avatar-btn.data-v-dcbcfe34:disabled {
+  opacity: 1;
+}
+/* 移除按钮默认边框 */
+.avatar-btn.data-v-dcbcfe34::after {
+  border: none;
+}
+/* 头像样式（与原样式一致） */
+.avatar.data-v-dcbcfe34 {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  border: 6rpx solid #fff;
+  box-sizing: border-box;
+}
+/* 外层盒子：与授权后 text 同尺寸同间距 */
+.nickname-box.data-v-dcbcfe34 {
+  height: 50rpx;
+  line-height: 50rpx;
+  margin-left: 24rpx;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+/* input 撑满容器，所有偏移量归零 */
+.nickname-input.data-v-dcbcfe34 {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #fff;
+  text-align: left;
+  padding: 0;
+  line-height: 1;
+}
+/* 授权后 text 保持同盒型 */
+.username-text.data-v-dcbcfe34 {
+  height: 50rpx;
+  line-height: 50rpx;
+  margin-left: 24rpx;
+  flex: 1;
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #fff;
+}
+/* 禁用状态完全继承样式，无变化 */
+.nickname-input.data-v-dcbcfe34:disabled {
+  background: transparent;
+  border: none;
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #fff;
+  opacity: 1;
+  pointer-events: none;
+  margin-left: 24rpx;
+  flex: 1;
+  flex-shrink: 0;
+  min-width: 0;
+  text-align: left !important;   /* 关键：阻止居中 */
+  line-height: 50rpx;            /* 与 input 内文字同高 */
+}
+/* 昵称占位符样式（与原样式一致） */
+.nickname-input.data-v-dcbcfe34::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+.nickname-input.data-v-dcbcfe34::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+/* 功能列表和协议列表美化 */
+.func-list.data-v-dcbcfe34, .agreement-list.data-v-dcbcfe34 {
+  background: #fff;
+  margin: 30rpx 24rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(74, 144, 226, 0.08);
+  overflow: hidden;
+}
+.list-title.data-v-dcbcfe34 {
+  font-size: 28rpx;
+  color: #999;
+  padding: 30rpx 32rpx 20rpx;
+  border-bottom: 1rpx solid #f0f4f8;
+}
+/* 列表项美化 */
+.func-item.data-v-dcbcfe34, .agreement-item.data-v-dcbcfe34 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f4f8;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+.func-item.data-v-dcbcfe34:active, .agreement-item.data-v-dcbcfe34:active {
+  background: #f8fafc;
+  -webkit-transform: translateX(4rpx);
+          transform: translateX(4rpx);
+}
+.func-item.data-v-dcbcfe34:last-child, .agreement-item.data-v-dcbcfe34:last-child {
+  border-bottom: none;
+}
+.func-left.data-v-dcbcfe34 {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.func-icon.data-v-dcbcfe34 {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 12rpx;
+  background: linear-gradient(135deg, #e8f2ff 0%, #d4e6ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+.text-content.data-v-dcbcfe34 {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.func-text.data-v-dcbcfe34 {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4rpx;
+}
+.agreement-desc.data-v-dcbcfe34 {
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.4;
+}
+/* 退出登录（与原样式一致） */
+.tuichu-entry.data-v-dcbcfe34 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50rpx;
+  background-color: hsl(208, 100%, 88%);
+  margin: 30rpx 16rpx 16rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+/* 退出登录文本（与原样式一致） */
+.tuichu-entry .title.data-v-dcbcfe34 {
+  font-size: 30rpx;
+  color: #fff;
+  font-weight: 500;
+}
+/* 退出登录图标（与原样式一致） */
+.tuichu-entry uni-icons.data-v-dcbcfe34 {
+  color: #fff;
+}
+

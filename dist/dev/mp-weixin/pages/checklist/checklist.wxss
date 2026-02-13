@@ -1,0 +1,54 @@
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[1]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/webpack-preprocess-loader/index.js??clonedRuleSet-12[0].rules[0].use[2]!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12[0].rules[0].use[3]!./node_modules/@dcloudio/vue-cli-plugin-uni/packages/vue-loader/lib/index.js??vue-loader-options!./node_modules/@dcloudio/webpack-uni-mp-loader/lib/style.js!./src/pages/checklist/checklist.vue?vue&type=style&index=0&id=5714c9d8&scoped=true&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+
+.checklist-empty.data-v-5714c9d8 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+.empty-icon.data-v-5714c9d8 {
+  margin-bottom: 40rpx;
+  opacity: 0.6;
+}
+.empty-title.data-v-5714c9d8 {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 20rpx;
+}
+.empty-desc.data-v-5714c9d8 {
+  font-size: 26rpx;
+  color: #999;
+  margin-bottom: 80rpx;
+  text-align: center;
+}
+.back-btn.data-v-5714c9d8 {
+  width: 60%;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  background-color: #007aff;
+  color: #fff;
+  border-radius: 40rpx;
+}
+
+/* 若保留去预约按钮，可添加：
+.appoint-btn {
+  width: 60%;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  background-color: #fff;
+  color: #007aff;
+  border: 1rpx solid #007aff;
+  border-radius: 40rpx;
+  margin-top: 20rpx;
+}
+*/
+
